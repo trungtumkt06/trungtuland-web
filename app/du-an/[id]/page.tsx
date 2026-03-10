@@ -1,58 +1,29 @@
-import Link from 'next/link';
+import connectMongoDB from '@/lib/mongodb';
+import Project from '@/models/Project';
 import { notFound } from 'next/navigation';
+import mongoose from 'mongoose';
 
-const projectsData = [
-  {
-    id: "du-an-1",
-    name: "Khu Đô Thị Sinh Thái Riverside",
-    location: "Quận 2, TP. Hồ Chí Minh",
-    price: "6.5 Tỷ VNĐ",
-    area: "120 - 250 m²",
-    type: "Biệt thự, Shophouse",
-    status: "Đang Mở Bán",
-    developer: "Tập đoàn Vạn Phát",
-    description: "Khu đô thị sinh thái kiểu mẫu ven sông, mang đến không gian sống xanh mát, trong lành cùng hệ thống tiện ích đẳng cấp 5 sao dành riêng cho giới tinh hoa.",
-    imageUrl: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-  },
-  {
-    id: "du-an-2",
-    name: "Tổ Hợp Căn Hộ Cao Cấp Sky View",
-    location: "Quận Cầu Giấy, Hà Nội",
-    price: "3.2 Tỷ VNĐ",
-    area: "65 - 105 m²",
-    type: "Căn hộ cao cấp",
-    status: "Sắp Bàn Giao",
-    developer: "Công ty CP Đầu Tư Thủ Đô",
-    description: "Dự án căn hộ cao cấp ngay trung tâm thủ đô, tầm nhìn panorama tuyệt đẹp nhìn ra toàn cảnh thành phố. Tiện ích nội khu bao gồm trung tâm thương mại, bể bơi bốn mùa, rạp chiếu phim...",
-    imageUrl: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-  },
-  {
-    id: "du-an-3",
-    name: "Biệt Thự Biển Ocean Park",
-    location: "Cam Lâm, Khánh Hòa",
-    price: "15 Tỷ VNĐ",
-    area: "300 - 500 m²",
-    type: "Biệt thự nghỉ dưỡng",
-    status: "Giữ Chỗ",
-    developer: "Tập đoàn Biển Xanh",
-    description: "Tổ hợp biệt thự nghỉ dưỡng đẳng cấp quốc tế tọa lạc tại bãi biển đẹp nhất hành tinh. Cơ hội đầu tư sinh lời vượt trội với cam kết lợi nhuận 10%/năm từ chủ đầu tư.",
-    imageUrl: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-  }
-];
-
-// THAY ĐỔI Ở ĐÂY: Thêm async và Promise
 export default async function ProjectDetail({ params }: { params: Promise<{ id: string }> }) {
-  
-  // THAY ĐỔI Ở ĐÂY: Dùng await để lấy id ra khỏi params
+  // Lấy ID từ thanh địa chỉ
   const resolvedParams = await params;
   const projectId = resolvedParams.id;
 
-  const project = projectsData.find((p) => p.id === projectId);
+  // 1. BẢO MẬT: Kiểm tra xem ID có đúng định dạng của MongoDB không
+  // (Nếu ai đó gõ bậy bạ URL như /du-an/123, web sẽ không bị sập mà chuyển sang trang 404)
+  if (!mongoose.Types.ObjectId.isValid(projectId)) {
+    return notFound();
+  }
 
+  // 2. KẾT NỐI: Lấy dữ liệu dự án từ MongoDB dựa vào ID
+  await connectMongoDB();
+  const project = await Project.findById(projectId);
+
+  // Nếu tìm không thấy dự án trong Database
   if (!project) {
     return notFound();
   }
 
+  // 3. HIỂN THỊ: Đổ dữ liệu thật ra giao diện
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
       {/* Banner Dự Án */}
@@ -98,7 +69,8 @@ export default async function ProjectDetail({ params }: { params: Promise<{ id: 
 
             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b">Tổng Quan Dự Án</h2>
-              <p className="text-gray-700 leading-relaxed text-lg">
+              {/* project.description có thể có dấu xuống dòng, dùng class whitespace-pre-wrap để hiển thị đúng */}
+              <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">
                 {project.description}
               </p>
             </div>
@@ -120,7 +92,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ id: 
                 <div>
                   <input type="email" placeholder="Email (Không bắt buộc)" className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600" />
                 </div>
-                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-colors text-lg shadow-md">
+                <button type="button" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-colors text-lg shadow-md">
                   Gửi Yêu Cầu
                 </button>
               </form>

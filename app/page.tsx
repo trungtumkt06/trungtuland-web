@@ -1,38 +1,28 @@
 import Link from 'next/link';
 import ProjectCard from '@/components/ProjectCard';
+import connectMongoDB from '@/lib/mongodb';
+import Project from '@/models/Project';
 
-export default function Home() {
-  // Dữ liệu mẫu (Mock Data) - Sau này sẽ được thay bằng dữ liệu gọi từ MongoDB
-  const featuredProjects = [
-    {
-      id: "du-an-1",
-      name: "Khu Đô Thị Sinh Thái Riverside",
-      location: "Quận 2, TP. Hồ Chí Minh",
-      price: "6.5 Tỷ VNĐ",
-      status: "Đang Mở Bán",
-      imageUrl: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: "du-an-2",
-      name: "Tổ Hợp Căn Hộ Cao Cấp Sky View",
-      location: "Quận Cầu Giấy, Hà Nội",
-      price: "3.2 Tỷ VNĐ",
-      status: "Sắp Bàn Giao",
-      imageUrl: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: "du-an-3",
-      name: "Biệt Thự Biển Ocean Park",
-      location: "Cam Lâm, Khánh Hòa",
-      price: "15 Tỷ VNĐ",
-      status: "Giữ Chỗ",
-      imageUrl: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    }
-  ];
+export default async function Home() {
+  // 1. Kết nối cơ sở dữ liệu và lấy dữ liệu thật
+  await connectMongoDB();
+  
+  // Lấy danh sách dự án từ MongoDB, sắp xếp theo thời gian mới nhất (createdAt: -1)
+  const rawProjects = await Project.find().sort({ createdAt: -1 });
+
+  // 2. Định dạng lại dữ liệu một chút để thẻ ProjectCard hiểu được (_id của MongoDB chuyển thành id)
+  const realProjects = rawProjects.map((doc) => ({
+    id: doc._id.toString(),
+    name: doc.name,
+    location: doc.location,
+    price: doc.price,
+    status: doc.status,
+    imageUrl: doc.imageUrl,
+  }));
 
   return (
     <main className="flex min-h-screen flex-col">
-      {/* Phần Banner Chính (Hero Section) */}
+      {/* Phần Banner Chính */}
       <section className="relative w-full h-[80vh] bg-gray-900 flex items-center justify-center">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-50"
@@ -57,7 +47,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Phần Danh Sách Dự Án Nổi Bật */}
+      {/* Phần Danh Sách Dự Án Thực Tế */}
       <section className="py-24 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -68,14 +58,17 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Lưới hiển thị 3 dự án */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
+          {/* Kiểm tra xem có dự án nào không */}
+          {realProjects.length === 0 ? (
+            <p className="text-center text-gray-500 text-lg">Chưa có dự án nào. Hãy vào trang Quản trị để thêm mới!</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {realProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )}
           
-          {/* Nút xem tất cả */}
           <div className="text-center mt-12">
             <Link href="/du-an" className="inline-block bg-white text-gray-800 border-2 border-gray-200 hover:border-blue-600 hover:text-blue-600 font-semibold px-8 py-3 rounded-md transition-all">
               Xem Tất Cả Dự Án
