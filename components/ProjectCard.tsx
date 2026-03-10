@@ -1,8 +1,11 @@
+"use client";
+
 import Link from 'next/link';
+import { motion } from 'framer-motion'; // THÊM DÒNG NÀY
 
 // Định nghĩa kiểu dữ liệu (TypeScript) cho Dự án
 interface Project {
-  id: string;
+  _id: string; // Đổi id thành _id cho khớp MongoDB
   name: string;
   location: string;
   price: string;
@@ -12,7 +15,15 @@ interface Project {
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (
-    <div className="group rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 bg-white border border-gray-100">
+    <motion.div 
+      // --- CẤU HÌNH HIỆU ỨNG ---
+      initial={{ opacity: 0, y: 30 }} // Ban đầu ẩn và nằm dưới 30px
+      whileInView={{ opacity: 1, y: 0 }} // Khi cuộn tới thì hiện lên và về vị trí cũ
+      viewport={{ once: true, margin: "-50px" }} // Chạy 1 lần khi cách mép màn hình 50px
+      transition={{ duration: 0.6, ease: "easeOut" }} // Thời gian chạy 0.6 giây
+      // -------------------------
+      className="group rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 bg-white border border-gray-100"
+    >
       {/* Khung chứa ảnh có hiệu ứng zoom nhẹ khi đưa chuột vào */}
       <div className="relative h-64 overflow-hidden">
         <div 
@@ -20,7 +31,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           style={{ backgroundImage: `url(${project.imageUrl})` }}
         ></div>
         
-        {/* Nhãn trạng thái (Đang mở bán, Sắp ra mắt...) */}
+        {/* Nhãn trạng thái */}
         <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
           {project.status}
         </div>
@@ -28,11 +39,11 @@ export default function ProjectCard({ project }: { project: Project }) {
       
       {/* Thông tin dự án */}
       <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
           {project.name}
         </h3>
         <p className="text-gray-500 text-sm mb-4 flex items-center">
-          <span className="mr-2">📍</span> {project.location}
+          <span className="mr-2 text-lg">📍</span> {project.location}
         </p>
         
         <div className="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
@@ -42,13 +53,13 @@ export default function ProjectCard({ project }: { project: Project }) {
           </div>
           
           <Link 
-            href={`/du-an/${project.id}`} 
+            href={`/du-an/${project._id}`} 
             className="text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 px-4 py-2 rounded-md text-sm font-semibold transition-colors"
           >
             Chi Tiết
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

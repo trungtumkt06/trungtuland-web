@@ -10,14 +10,14 @@ const projectSchema = new Schema(
     status: { type: String, required: true },
     developer: { type: String, required: true },
     description: { type: String, required: true },
-    imageUrl: { type: String, required: true },
+    // CHỈNH SỬA TẠI ĐÂY: Chuyển sang mảng để lưu nhiều link ảnh
+    images: { type: [String], required: true }, 
   },
   {
-    timestamps: true, // Tự động lưu thời gian tạo và cập nhật
+    timestamps: true,
   }
 );
 
-// Tránh lỗi khi Next.js reload lại file
 const Project = mongoose.models.Project || mongoose.model('Project', projectSchema);
 
 export default Project;
