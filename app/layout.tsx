@@ -4,6 +4,7 @@ import "./globals.css";
 // Import file Navbar và Footer
 import Navbar from "@/components/Navbar"; 
 import Footer from "@/components/Footer";
+import FloatingContact from "@/components/FloatingContact";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +31,8 @@ export default function RootLayout({
 
         {/* Chân trang xuất hiện ở mọi trang */}
         <Footer />
+        {/* Nút liên hệ nổi */}
+        <FloatingContact />
       </body>
     </html>
   );
