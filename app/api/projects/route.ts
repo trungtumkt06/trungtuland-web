@@ -2,41 +2,32 @@ import connectMongoDB from "@/lib/mongodb";
 import Project from "@/models/Project";
 import { NextResponse } from "next/server";
 
-// Lệnh POST: Thêm dự án mới với danh sách nhiều ảnh
 export async function POST(request: Request) {
   try {
-    // Đổi imageUrl thành images để khớp với Model mới
-    const { name, location, price, area, type, status, developer, description, images } = await request.json();
-    
+    const body = await request.json();
     await connectMongoDB();
     
-    // Lưu vào Database
-    await Project.create({ 
-      name, 
-      location, 
-      price, 
-      area, 
-      type, 
-      status, 
-      developer, 
-      description, 
-      images // Truyền mảng images vào đây
-    });
+    // Tạo dự án mới
+    const newProject = await Project.create(body);
 
-    return NextResponse.json({ message: "Đã thêm dự án thành công!" }, { status: 201 });
-  } catch (error) {
-    console.error("Lỗi API POST:", error);
-    return NextResponse.json({ message: "Lỗi khi thêm dự án" }, { status: 500 });
+    return NextResponse.json({ message: "Đã thêm dự án thành công!", project: newProject }, { status: 201 });
+  } catch (error: any) {
+    console.error("LỖI SERVER RÕ RÀNG:", error);
+    
+    // Gửi chi tiết lỗi (error.message) ra trình duyệt để dễ đọc
+    return NextResponse.json({ 
+      message: "Lỗi Database",
+      chiTiet: error.message || "Lỗi không xác định"
+    }, { status: 500 });
   }
 }
 
-// Lệnh GET: Lấy danh sách TẤT CẢ dự án
 export async function GET() {
   try {
     await connectMongoDB();
-    const projects = await Project.find().sort({ createdAt: -1 }); // Thêm sort để dự án mới nhất hiện lên đầu
+    const projects = await Project.find().sort({ createdAt: -1 });
     return NextResponse.json({ projects }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ message: "Lỗi khi tải danh sách dự án" }, { status: 500 });
+  } catch (error: any) {
+    return NextResponse.json({ message: "Lỗi khi tải", chiTiet: error.message }, { status: 500 });
   }
 }

@@ -24,7 +24,7 @@ export default function AdminDashboardCombined() {
     status: "Đang Mở Bán",
     developer: "",
     description: "",
-    imageUrl: "",
+    imageUrl: "", // Vẫn giữ ở Form là 1 link ảnh để nhập cho dễ
   };
   const [formData, setFormData] = useState(initialFormState);
 
@@ -40,7 +40,6 @@ export default function AdminDashboardCombined() {
       const res = await fetch('/api/projects');
       const data = await res.json();
       
-      // 👉 THÊM DÒNG NÀY ĐỂ XEM SERVER TRẢ VỀ CÁI GÌ:
       console.log("Dữ liệu từ Server trả về:", data); 
 
       setProjects(data.projects || []); 
@@ -65,23 +64,40 @@ export default function AdminDashboardCombined() {
   // Hàm 3: Bấm nút "Thêm Dự Án"
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // CHUẨN HÓA DỮ LIỆU: Biến link ảnh thành mảng [images] để gửi cho Backend
+    const dataToSend = {
+      name: formData.name,
+      location: formData.location,
+      price: formData.price,
+      area: formData.area,
+      type: formData.type,
+      status: formData.status,
+      developer: formData.developer,
+      description: formData.description,
+      images: formData.imageUrl ? [formData.imageUrl] : [], // 👈 Sửa ở đây
+    };
+
     try {
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend), // Gửi dataToSend thay vì formData
       });
 
       if (res.ok) {
         alert("🎉 Đã thêm dự án thành công!");
-        setFormData(initialFormState); // Xóa trắng form để nhập dự án khác
-        fetchProjects(); // Cập nhật lại cái Bảng bên dưới ngay lập tức
+        setFormData(initialFormState); 
+        fetchProjects(); 
       } else {
-        throw new Error("Lỗi khi thêm dự án");
+        // 👉 ĐÃ SỬA: Lấy chính xác thông báo lỗi từ Server
+        const errorData = await res.json();
+        console.error("Chi tiết lỗi từ Backend:", errorData);
+        alert(`❌ Không thể thêm dự án: ${errorData.message || 'Lỗi hệ thống'}`);
       }
     } catch (error) {
       console.error(error);
-      alert("Đã xảy ra lỗi, vui lòng thử lại!");
+      alert("Đã xảy ra lỗi, vui lòng kiểm tra lại thông tin!");
     }
   };
 
@@ -119,7 +135,7 @@ export default function AdminDashboardCombined() {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           
-          {/* CỘT TRÁI (HOẶC TRÊN CÙNG): FORM THÊM DỰ ÁN (Chiếm 1/3 chiều rộng) */}
+          {/* CỘT TRÁI: FORM THÊM DỰ ÁN */}
           <div className="xl:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit sticky top-24">
             <h2 className="text-xl font-bold text-gray-900 mb-6 border-b pb-2">Thêm Dự Án Mới</h2>
             
@@ -176,12 +192,12 @@ export default function AdminDashboardCombined() {
               </div>
 
               <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-md transition-colors mt-2">
-                + Lưu Dự Án
+                Thêm Dự Án
               </button>
             </form>
           </div>
 
-          {/* CỘT PHẢI (HOẶC DƯỚI CÙNG): BẢNG QUẢN LÝ DỰ ÁN (Chiếm 2/3 chiều rộng) */}
+          {/* CỘT PHẢI: BẢNG QUẢN LÝ DỰ ÁN */}
           <div className="xl:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-xl font-bold text-gray-900 mb-6 border-b pb-2">Danh Sách Dự Án Đang Bán ({projects.length})</h2>
             
@@ -214,7 +230,6 @@ export default function AdminDashboardCombined() {
                             </span>
                           </td>
                           <td className="py-4 px-4 border-b text-center">
-                            {/* Nút Sửa sẽ code sau */}
                             <Link href={`/admin/sua-du-an/${project._id}`} className="text-blue-600 hover:text-blue-800 font-medium mr-4">
                               Sửa
                             </Link>

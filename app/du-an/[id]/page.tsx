@@ -10,12 +10,26 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+// 1. ĐỊNH NGHĨA KIỂU DỮ LIỆU
+interface ProjectDetailType {
+  _id: string;
+  name: string;
+  location: string;
+  price: string;
+  area: string;
+  type: string;
+  developer: string;
+  status: string;
+  description: string;
+  images?: string[]; // Mảng ảnh mới
+  imageUrl?: string; // Tương thích với link ảnh cũ
+}
+
 export default function ProjectDetail() {
   const params = useParams();
-  const [project, setProject] = useState<any>(null);
+  const [project, setProject] = useState<ProjectDetailType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 1. Lấy dữ liệu từ API (vì dùng "use client" nên ta fetch qua useEffect)
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -32,12 +46,23 @@ export default function ProjectDetail() {
     fetchProject();
   }, [params.id]);
 
-  if (loading) return <div className="text-center py-20">Đang tải dữ liệu...</div>;
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("Yêu cầu của bạn đã được gửi. Chúng tôi sẽ liên hệ sớm nhất!");
+  };
+
+  if (loading) return <div className="text-center py-20 text-lg text-gray-500 font-medium">Đang tải dữ liệu...</div>;
   if (!project) return notFound();
+
+  // 👉 BƯỚC XỬ LÝ ẢNH THÔNG MINH: 
+  // Lấy mảng images, nếu không có thì lấy imageUrl bọc trong mảng, nếu không có nữa thì trả về mảng rỗng []
+  const galleryImages = (project.images && project.images.length > 0) 
+    ? project.images 
+    : (project.imageUrl ? [project.imageUrl] : []);
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
-      {/* 1. THƯ VIỆN ẢNH (SLIDE) - Thay thế cho Banner tĩnh */}
+      {/* THƯ VIỆN ẢNH (SLIDE) */}
       <div className="w-full h-[50vh] md:h-[65vh] relative bg-gray-200">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
@@ -46,8 +71,8 @@ export default function ProjectDetail() {
           autoplay={{ delay: 4000 }}
           className="h-full w-full"
         >
-          {project.images && project.images.length > 0 ? (
-            project.images.map((img: string, index: number) => (
+          {galleryImages.length > 0 ? (
+            galleryImages.map((img: string, index: number) => (
               <SwiperSlide key={index}>
                 <div 
                   className="w-full h-full bg-cover bg-center"
@@ -59,7 +84,9 @@ export default function ProjectDetail() {
             ))
           ) : (
             <SwiperSlide>
-               <div className="flex items-center justify-center h-full text-gray-400">Chưa có ảnh dự án</div>
+               <div className="flex items-center justify-center h-full text-gray-500 font-medium bg-gray-200">
+                 Chưa có ảnh dự án
+               </div>
             </SwiperSlide>
           )}
         </Swiper>
@@ -67,7 +94,7 @@ export default function ProjectDetail() {
         {/* Tiêu đề đè lên Slide */}
         <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 bg-gradient-to-t from-black/80 to-transparent z-[10]">
           <div className="container mx-auto">
-            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-4 inline-block">
+            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-4 inline-block shadow-sm">
               {project.status}
             </span>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{project.name}</h1>
@@ -114,10 +141,10 @@ export default function ProjectDetail() {
               <h3 className="text-xl font-bold text-gray-900 mb-2">Nhận Bảng Giá & Tư Vấn</h3>
               <p className="text-gray-500 text-sm mb-6">Để lại thông tin, chuyên viên của chúng tôi sẽ liên hệ trong 15 phút.</p>
               
-              <form className="space-y-4">
+              <form onSubmit={handleContactSubmit} className="space-y-4">
                 <input type="text" placeholder="Họ và tên *" className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none" required />
                 <input type="tel" placeholder="Số điện thoại *" className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none" required />
-                <button type="button" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-all text-lg shadow-md">
+                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-all text-lg shadow-md">
                   Gửi Yêu Cầu
                 </button>
               </form>

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema } from "mongoose";
 
 const projectSchema = new Schema(
   {
@@ -10,14 +10,12 @@ const projectSchema = new Schema(
     status: { type: String, required: true },
     developer: { type: String, required: true },
     description: { type: String, required: true },
-    // CHỈNH SỬA TẠI ĐÂY: Chuyển sang mảng để lưu nhiều link ảnh
-    images: { type: [String], required: true }, 
+    // Cho phép cả images (mảng) và imageUrl (chuỗi) để không bao giờ bị lỗi vặt
+    images: [{ type: String }], 
+    imageUrl: { type: String, required: false } 
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const Project = mongoose.models.Project || mongoose.model('Project', projectSchema);
-
+const Project = mongoose.models.Project || mongoose.model("Project", projectSchema);
 export default Project;

@@ -12,14 +12,18 @@ export default async function AllProjectsPage() {
   // 2. Lấy toàn bộ dự án, sắp xếp mới nhất lên đầu
   const rawProjects = await Project.find().sort({ createdAt: -1 });
 
-  // 3. Chuẩn hóa dữ liệu cho Component ProjectCard
+// 3. Chuẩn hóa dữ liệu cho Component ProjectCard
   const projects = rawProjects.map((doc) => ({
     _id: doc._id.toString(), // ✅ ĐÃ SỬA: Đổi 'id' thành '_id' cho khớp với ProjectCard
     name: doc.name,
     location: doc.location,
     price: doc.price,
     status: doc.status,
-    imageUrl: doc.imageUrl,
+    // ✅ ĐÃ SỬA DÒNG NÀY: Ưu tiên lấy ảnh đầu tiên trong mảng 'images'. 
+    // Nếu không có thì lấy 'imageUrl' của dữ liệu cũ, không có nữa thì dùng ảnh dự phòng.
+    imageUrl: (doc.images && doc.images.length > 0) 
+      ? doc.images[0] 
+      : (doc.imageUrl || "https://placehold.co/600x400/eeeeee/999999?text=Chua+co+anh"),
   }));
 
   return (

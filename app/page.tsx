@@ -15,8 +15,18 @@ export default function Home() {
       try {
         const res = await fetch("/api/projects");
         const data = await res.json();
-        setProjects(data.projects || []);
-        setFilteredProjects(data.projects || []);
+        
+        // Chuẩn hóa dữ liệu ngay khi nhận về từ API
+        const formattedProjects = (data.projects || []).map((p: any) => ({
+          ...p,
+          // Rút ảnh đầu tiên trong mảng images ra để làm ảnh đại diện
+          imageUrl: (p.images && p.images.length > 0) 
+            ? p.images[0] 
+            : (p.imageUrl || "https://placehold.co/600x400/eeeeee/999999?text=Chua+co+anh"),
+        }));
+
+        setProjects(formattedProjects);
+        setFilteredProjects(formattedProjects); // Mặc định hiển thị tất cả
       } catch (error) {
         console.error("Lỗi fetch dữ liệu:", error);
       }
@@ -24,15 +34,15 @@ export default function Home() {
     fetchProjects();
   }, []);
 
-  // 2. Logic tìm kiếm và lọc dữ liệu
-  useEffect(() => {
+  // 2. Logic tìm kiếm (Chỉ chạy khi bấm nút hoặc ấn Enter)
+  const handleSearch = () => {
     const result = projects.filter((p: any) => {
       const matchName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchType = filterType === "" || p.type === filterType;
       return matchName && matchType;
     });
     setFilteredProjects(result);
-  }, [searchTerm, filterType, projects]);
+  };
 
   return (
     <main className="bg-white">
@@ -56,33 +66,47 @@ export default function Home() {
           <p className="text-xl md:text-2xl mb-10 text-gray-200">
             Nơi khơi nguồn hạnh phúc - Đầu tư vững bền cho tương lai
           </p>
-          
-          {/* Thanh Tìm Kiếm Đa Năng */}
-          <div className="bg-white p-2 rounded-xl shadow-2xl flex flex-col md:flex-row gap-2">
-            <input 
-              type="text" 
-              placeholder="Nhập tên dự án hoặc khu vực..." 
-              className="flex-grow px-6 py-4 outline-none text-gray-800 text-lg rounded-l-lg"
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <select 
-              className="px-6 py-4 outline-none text-gray-600 bg-gray-50 border-l border-r"
-              onChange={(e) => setFilterType(e.target.value)}
+          {/* Thanh Tìm Kiếm Đa Năng - Luxury Version */}
+          <div className="bg-white p-2 rounded-2xl shadow-2xl flex flex-col md:flex-row items-stretch gap-2 backdrop-blur-sm bg-white/95">
+            {/* Ô Nhập Tên/Khu Vực */}
+            <div className="flex-grow flex items-center px-4 group">
+              <span className="text-gray-400 group-focus-within:text-yellow-600 transition-colors text-xl">🔍</span>
+              <input 
+                type="text" 
+                placeholder="Bạn muốn tìm dự án nào..." 
+                className="w-full px-3 py-4 outline-none text-gray-800 text-lg placeholder:text-gray-400 bg-transparent"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
+            </div>
+            {/* Đường kẻ dọc ngăn cách (Chỉ hiện trên desktop) */}
+            <div className="hidden md:block w-[1px] bg-gray-200 my-3"></div>
+            {/* Chọn Loại Hình */}
+            <div className="flex items-center px-4 group">
+              <span className="text-gray-400 text-xl">🏢</span>
+              <select 
+                className="px-3 py-4 outline-none text-gray-700 bg-transparent cursor-pointer min-w-[160px] text-lg font-medium"
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                <option value="">Tất cả loại hình</option>
+                <option value="Căn hộ">Căn hộ</option>
+                <option value="Biệt thự">Biệt thự</option>
+                <option value="Đất nền">Đất nền</option>
+                <option value="Nhà phố">Nhà phố</option>
+              </select>
+            </div>
+            {/* Nút Tìm Kiếm */}
+            <button 
+              onClick={handleSearch}
+              className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-white px-12 py-4 rounded-xl font-bold transition-all duration-300 text-lg shadow-lg hover:shadow-yellow-600/20 uppercase tracking-wider flex items-center justify-center gap-2"
             >
-              <option value="">Tất cả loại hình</option>
-              <option value="Căn hộ">Căn hộ</option>
-              <option value="Biệt thự">Biệt thự</option>
-              <option value="Đất nền">Đất nền</option>
-              <option value="Nhà phố">Nhà phố</option>
-            </select>
-            <button className="bg-yellow-600 hover:bg-yellow-700 text-white px-10 py-4 rounded-lg font-bold transition-all text-lg">
-              TÌM KIẾM
+              <span>Tìm Kiếm</span>
             </button>
           </div>
         </div>
       </section>
 
-      {/* SECTION 2: DỊCH VỤ & UY TÍN (Khối mới) */}
+      {/* SECTION 2: DỊCH VỤ & UY TÍN */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">

@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function EditProjectPage() {
   const router = useRouter();
   const params = useParams();
-  const projectId = params.id; // Lấy ID từ thanh địa chỉ
+  const projectId = params.id;
 
   const [formData, setFormData] = useState({
     name: "", location: "", price: "", area: "", type: "", 
@@ -15,14 +15,31 @@ export default function EditProjectPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Vừa vào trang là tự động gọi API lấy thông tin cũ đổ vào Form
+  // 1. LẤY DỮ LIỆU CŨ ĐỔ VÀO FORM
   useEffect(() => {
     const fetchProject = async () => {
       try {
         const res = await fetch(`/api/projects/${projectId}`);
         if (res.ok) {
           const data = await res.json();
-          setFormData(data.project); // Bơm dữ liệu vào state
+          const p = data.project;
+          
+          // 👉 BƯỚC CHUẨN HÓA 1: Rút ảnh từ mảng images ra để điền vào ô input
+          const currentImage = (p.images && p.images.length > 0) 
+            ? p.images[0] 
+            : (p.imageUrl || "");
+
+          setFormData({
+            name: p.name || "",
+            location: p.location || "",
+            price: p.price || "",
+            area: p.area || "",
+            type: p.type || "",
+            status: p.status || "Đang Mở Bán",
+            developer: p.developer || "",
+            description: p.description || "",
+            imageUrl: currentImage, // Đưa ảnh đã rút ra vào đây
+          });
         }
         setIsLoading(false);
       } catch (error) {
@@ -36,19 +53,26 @@ export default function EditProjectPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // 2. GỬI DỮ LIỆU ĐÃ SỬA LÊN DATABASE
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 👉 BƯỚC CHUẨN HÓA 2: Bọc cái link ảnh lại thành mảng images trước khi gửi đi
+    const dataToSend = {
+      ...formData,
+      images: formData.imageUrl ? [formData.imageUrl] : [], 
+    };
+
     try {
-      // Gọi lệnh PUT để cập nhật
       const res = await fetch(`/api/projects/${projectId}`, {
         method: "PUT",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend), // Gửi dataToSend thay vì formData gốc
       });
 
       if (res.ok) {
         alert("✅ Đã cập nhật thông tin dự án thành công!");
-        router.push("/admin"); // Cập nhật xong thì tự động quay về trang Bảng điều khiển
+        router.push("/admin"); 
       } else {
         throw new Error("Lỗi khi cập nhật");
       }
