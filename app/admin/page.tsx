@@ -3,249 +3,238 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-// Định nghĩa kiểu dữ liệu cho dự án hiển thị trong bảng
-type ProjectType = {
-  _id: string;
-  name: string;
-  price: string;
-  status: string;
-};
-
 export default function AdminDashboardCombined() {
-  // ---------------- LƯU TRỮ TRẠNG THÁI ----------------
-  
-  // 1. Trạng thái của Form thêm dự án
-  const initialFormState = {
-    name: "",
-    location: "",
-    price: "",
-    area: "",
-    type: "",
-    status: "Đang Mở Bán",
-    developer: "",
-    description: "",
-    imageUrl: "", // Vẫn giữ ở Form là 1 link ảnh để nhập cho dễ
-  };
-  const [formData, setFormData] = useState(initialFormState);
-
-  // 2. Trạng thái của Bảng danh sách dự án
-  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [activeTab, setActiveTab] = useState<"projects" | "posts">("projects");
   const [isLoading, setIsLoading] = useState(true);
 
-  // ---------------- CÁC HÀM XỬ LÝ ----------------
+  // ---------------- STATE DỰ ÁN ----------------
+  const initialProjectState = {
+    name: "", location: "", price: "", area: "", type: "", 
+    status: "Đang Mở Bán", developer: "", description: "", imageUrl: "",
+  };
+  const [projectForm, setProjectForm] = useState(initialProjectState);
+  const [projects, setProjects] = useState<any[]>([]);
 
-  // Hàm 1: Gọi dữ liệu từ Database để đổ vào Bảng
-  const fetchProjects = async () => {
+  // ---------------- STATE TIN TỨC ----------------
+  const initialPostState = {
+    title: "", summary: "", content: "", imageUrl: "", category: "Thị trường"
+  };
+  const [postForm, setPostForm] = useState(initialPostState);
+  const [posts, setPosts] = useState<any[]>([]);
+
+  // ---------------- HÀM GỌI DỮ LIỆU ----------------
+  const fetchData = async () => {
+    setIsLoading(true);
     try {
-      const res = await fetch('/api/projects');
-      const data = await res.json();
-      
-      console.log("Dữ liệu từ Server trả về:", data); 
+      const resProj = await fetch('/api/projects');
+      if (resProj.ok) {
+        const dataProj = await resProj.json();
+        setProjects(dataProj.projects || []);
+      }
 
-      setProjects(data.projects || []); 
-      setIsLoading(false);
+      const resPost = await fetch('/api/posts');
+      if (resPost.ok) {
+        const dataPost = await resPost.json();
+        setPosts(dataPost.posts || []);
+      }
     } catch (error) {
-      console.error("Lỗi tải dữ liệu", error);
-      setProjects([]); 
+      console.error("Lỗi tải dữ liệu:", error);
+    } finally {
       setIsLoading(false);
     }
   };
 
-  // Tự động chạy Hàm 1 khi vừa mở trang quản trị
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
-  // Hàm 2: Ghi nhận chữ bạn gõ vào Form
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Hàm 3: Bấm nút "Thêm Dự Án"
-  const handleSubmit = async (e: React.FormEvent) => {
+  // ---------------- XỬ LÝ DỰ ÁN ----------------
+  const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // CHUẨN HÓA DỮ LIỆU: Biến link ảnh thành mảng [images] để gửi cho Backend
-    const dataToSend = {
-      name: formData.name,
-      location: formData.location,
-      price: formData.price,
-      area: formData.area,
-      type: formData.type,
-      status: formData.status,
-      developer: formData.developer,
-      description: formData.description,
-      images: formData.imageUrl ? [formData.imageUrl] : [], // 👈 Sửa ở đây
-    };
-
     try {
+      const dataToSend = { 
+        ...projectForm, 
+        images: projectForm.imageUrl ? [projectForm.imageUrl] : [] 
+      };
+      
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify(dataToSend), // Gửi dataToSend thay vì formData
+        body: JSON.stringify(dataToSend),
       });
 
       if (res.ok) {
-        alert("🎉 Đã thêm dự án thành công!");
-        setFormData(initialFormState); 
-        fetchProjects(); 
-      } else {
-        // 👉 ĐÃ SỬA: Lấy chính xác thông báo lỗi từ Server
-        const errorData = await res.json();
-        console.error("Chi tiết lỗi từ Backend:", errorData);
-        alert(`❌ Không thể thêm dự án: ${errorData.message || 'Lỗi hệ thống'}`);
+        alert("🎉 Thêm dự án thành công!");
+        setProjectForm(initialProjectState);
+        fetchData();
       }
-    } catch (error) {
-      console.error(error);
-      alert("Đã xảy ra lỗi, vui lòng kiểm tra lại thông tin!");
-    }
+    } catch (err) { alert("Lỗi khi kết nối API Dự án"); }
   };
 
-  // Hàm 4: Bấm nút "Xóa" ở Bảng
-  const handleDelete = async (id: string) => {
-    const confirmed = confirm("Bạn có chắc chắn muốn xóa dự án này vĩnh viễn không?");
-    if (!confirmed) return;
-
+  // ---------------- XỬ LÝ TIN TỨC (SỬA LẠI ĐỂ CHẠY CHUẨN) ----------------
+  const handlePostSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const res = await fetch(`/api/projects/${id}`, {
-        method: 'DELETE',
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(postForm),
       });
 
       if (res.ok) {
-        alert("🗑️ Đã xóa dự án thành công!");
-        fetchProjects(); // Cập nhật lại cái Bảng bên dưới sau khi xóa
+        alert("📰 Đăng bài viết thành công!");
+        setPostForm(initialPostState); // Reset form
+        fetchData(); // Cập nhật danh sách bên phải
       } else {
-        alert("Có lỗi xảy ra khi xóa.");
+        const errorData = await res.json();
+        alert(`❌ Lỗi: ${errorData.message || "Không thể đăng bài"}`);
       }
     } catch (error) {
-      console.error(error);
+      alert("❌ Lỗi kết nối server, hãy kiểm tra file route.ts");
     }
   };
 
-  // ---------------- GIAO DIỆN HIỂN THỊ ----------------
+  const deleteProject = async (id: string) => {
+    if (!confirm("Xóa dự án này?")) return;
+    const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+    if (res.ok) fetchData();
+  };
+
+  const deletePost = async (id: string) => {
+    if (!confirm("Xóa bài viết này?")) return;
+    const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
+    if (res.ok) fetchData();
+  };
+
   return (
-    <main className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <main className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-6">
         
-        {/* Tiêu đề Trang Quản Trị */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Bảng Điều Khiển Quản Trị</h1>
-          <p className="text-gray-500">Xin chào, Admin TRUNGTỰ LAND</p>
+        {/* HEADER & CHUYỂN TAB */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col md:flex-row justify-between items-center gap-4">
+          <h1 className="text-2xl font-bold text-gray-900 uppercase tracking-tight">Quản Trị Trung Tự Land</h1>
+          <div className="flex bg-gray-100 p-1 rounded-xl shadow-inner">
+            <button 
+              onClick={() => setActiveTab("projects")}
+              className={`px-8 py-2.5 rounded-lg font-bold transition-all duration-300 ${activeTab === "projects" ? "bg-blue-600 text-white shadow-lg" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              🏢 DỰ ÁN
+            </button>
+            <button 
+              onClick={() => setActiveTab("posts")}
+              className={`px-8 py-2.5 rounded-lg font-bold transition-all duration-300 ${activeTab === "posts" ? "bg-yellow-600 text-white shadow-lg" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              📰 TIN TỨC
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           
-          {/* CỘT TRÁI: FORM THÊM DỰ ÁN */}
-          <div className="xl:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit sticky top-24">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 border-b pb-2">Thêm Dự Án Mới</h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tên dự án *</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-3 py-2 border rounded-md" />
+          {/* CỘT TRÁI: FORM */}
+          <div className="xl:col-span-1">
+            {activeTab === "projects" ? (
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 sticky top-8 animate-in fade-in duration-500">
+                <h2 className="text-lg font-bold text-blue-600 mb-6 border-b-2 border-blue-50 pb-2 uppercase italic">Thêm Dự Án Mới</h2>
+                <form onSubmit={handleProjectSubmit} className="space-y-4">
+                  <input type="text" placeholder="Tên dự án" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                    value={projectForm.name} onChange={(e) => setProjectForm({...projectForm, name: e.target.value})} required />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input type="text" placeholder="Giá" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                        value={projectForm.price} onChange={(e) => setProjectForm({...projectForm, price: e.target.value})} required />
+                    <select className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white" 
+                        value={projectForm.status} onChange={(e) => setProjectForm({...projectForm, status: e.target.value})}>
+                      <option value="Đang Mở Bán">Đang Mở Bán</option>
+                      <option value="Sắp Mở Bán">Sắp Mở Bán</option>
+                      <option value="Đã Bán Hết">Đã Bán Hết</option>
+                    </select>
+                  </div>
+                  <input type="text" placeholder="Vị trí" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                    value={projectForm.location} onChange={(e) => setProjectForm({...projectForm, location: e.target.value})} required />
+                  <input type="text" placeholder="Link Ảnh" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                    value={projectForm.imageUrl} onChange={(e) => setProjectForm({...projectForm, imageUrl: e.target.value})} required />
+                  <textarea placeholder="Mô tả..." rows={4} className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                    value={projectForm.description} onChange={(e) => setProjectForm({...projectForm, description: e.target.value})} required />
+                  <button type="submit" className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all shadow-md active:scale-95">LƯU DỰ ÁN</button>
+                </form>
               </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Giá bán *</label>
-                  <input type="text" name="price" value={formData.price} onChange={handleChange} required className="w-full px-3 py-2 border rounded-md" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
-                  <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border rounded-md">
-                    <option value="Đang Mở Bán">Đang Mở Bán</option>
-                    <option value="Sắp Mở Bán">Sắp Mở Bán</option>
-                    <option value="Đã Bán Hết">Đã Bán Hết</option>
+            ) : (
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 sticky top-8 animate-in fade-in duration-500">
+                <h2 className="text-lg font-bold text-yellow-600 mb-6 border-b-2 border-yellow-50 pb-2 uppercase italic">Đăng Bài Viết Mới</h2>
+                <form onSubmit={handlePostSubmit} className="space-y-4">
+                  <input type="text" placeholder="Tiêu đề bài viết" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none" 
+                    value={postForm.title} onChange={(e) => setPostForm({...postForm, title: e.target.value})} required />
+                  <select className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none bg-white" 
+                    value={postForm.category} onChange={(e) => setPostForm({...postForm, category: e.target.value})}>
+                    <option value="Thị trường">Thị trường</option>
+                    <option value="Kinh nghiệm">Kinh nghiệm</option>
+                    <option value="Quy hoạch">Quy hoạch</option>
                   </select>
-                </div>
+                  <input type="text" placeholder="Link Ảnh bìa" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none" 
+                    value={postForm.imageUrl} onChange={(e) => setPostForm({...postForm, imageUrl: e.target.value})} required />
+                  <input type="text" placeholder="Tóm tắt ngắn" className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none" 
+                    value={postForm.summary} onChange={(e) => setPostForm({...postForm, summary: e.target.value})} required />
+                  <textarea placeholder="Nội dung chi tiết..." rows={8} className="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none" 
+                    value={postForm.content} onChange={(e) => setPostForm({...postForm, content: e.target.value})} required />
+                  <button type="submit" className="w-full bg-yellow-600 text-white font-bold py-3.5 rounded-xl hover:bg-yellow-700 transition-all shadow-md active:scale-95">ĐĂNG BÀI NGAY</button>
+                </form>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Vị trí *</label>
-                <input type="text" name="location" value={formData.location} onChange={handleChange} required className="w-full px-3 py-2 border rounded-md" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Diện tích *</label>
-                  <input type="text" name="area" value={formData.area} onChange={handleChange} required className="w-full px-3 py-2 border rounded-md" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Loại hình *</label>
-                  <input type="text" name="type" value={formData.type} onChange={handleChange} required className="w-full px-3 py-2 border rounded-md" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Chủ đầu tư *</label>
-                <input type="text" name="developer" value={formData.developer} onChange={handleChange} required className="w-full px-3 py-2 border rounded-md" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Link Ảnh (URL) *</label>
-                <input type="text" name="imageUrl" value={formData.imageUrl} onChange={handleChange} required className="w-full px-3 py-2 border rounded-md" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả *</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} required rows={3} className="w-full px-3 py-2 border rounded-md"></textarea>
-              </div>
-
-              <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-md transition-colors mt-2">
-                Thêm Dự Án
-              </button>
-            </form>
+            )}
           </div>
 
-          {/* CỘT PHẢI: BẢNG QUẢN LÝ DỰ ÁN */}
-          <div className="xl:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 border-b pb-2">Danh Sách Dự Án Đang Bán ({projects.length})</h2>
-            
+          {/* CỘT PHẢI: BẢNG DANH SÁCH */}
+          <div className="xl:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
             {isLoading ? (
-              <p className="text-center py-10">Đang tải dữ liệu...</p>
-            ) : (
+              <div className="flex flex-col items-center justify-center py-20 italic text-gray-500">Đang đồng bộ dữ liệu...</div>
+            ) : activeTab === "projects" ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full bg-white">
-                  <thead className="bg-gray-50">
+                <h2 className="text-xl font-bold mb-6 flex justify-between">Danh Sách Dự Án <span>({projects.length})</span></h2>
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 border-b text-gray-400 text-sm">
                     <tr>
-                      <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 border-b">Tên Dự Án</th>
-                      <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 border-b">Giá Bán</th>
-                      <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 border-b">Trạng Thái</th>
-                      <th className="py-3 px-4 text-center text-sm font-semibold text-gray-600 border-b">Hành Động</th>
+                      <th className="p-4">Tên dự án</th>
+                      <th className="p-4">Giá</th>
+                      <th className="p-4 text-center">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {projects.length === 0 ? (
-                      <tr>
-                        <td colSpan={4} className="text-center py-8 text-gray-500">Chưa có dự án nào. Thêm ở cột bên trái!</td>
+                    {projects.map((p) => (
+                      <tr key={p._id} className="border-b hover:bg-gray-50 transition-colors">
+                        <td className="p-4 font-bold text-gray-800">{p.name}</td>
+                        <td className="p-4 text-red-600 font-bold">{p.price}</td>
+                        <td className="p-4 text-center space-x-4">
+                          <Link href={`/admin/sua-du-an/${p._id}`} className="text-blue-600 font-bold hover:underline">Sửa</Link>
+                          <button onClick={() => deleteProject(p._id)} className="text-red-500 font-bold hover:underline">Xóa</button>
+                        </td>
                       </tr>
-                    ) : (
-                      projects?.map((project) => (
-                        <tr key={project._id} className="hover:bg-gray-50 transition-colors">
-                          <td className="py-4 px-4 border-b font-medium text-gray-900">{project.name}</td>
-                          <td className="py-4 px-4 border-b text-red-600 font-bold">{project.price}</td>
-                          <td className="py-4 px-4 border-b">
-                            <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-200">
-                              {project.status}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4 border-b text-center">
-                            <Link href={`/admin/sua-du-an/${project._id}`} className="text-blue-600 hover:text-blue-800 font-medium mr-4">
-                              Sửa
-                            </Link>
-                            <button onClick={() => handleDelete(project._id)} className="text-red-500 hover:text-red-700 font-medium">
-                              Xóa
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <h2 className="text-xl font-bold mb-6 flex justify-between">Bài Viết Đã Đăng <span>({posts.length})</span></h2>
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 border-b text-gray-400 text-sm">
+                    <tr>
+                      <th className="p-4">Tiêu đề bài viết</th>
+                      <th className="p-4">Chuyên mục</th>
+                      <th className="p-4 text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {posts.map((post) => (
+                      <tr key={post._id} className="border-b hover:bg-gray-50 transition-colors">
+                        <td className="p-4 font-medium text-gray-800 line-clamp-1">{post.title}</td>
+                        <td className="p-4"><span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">{post.category}</span></td>
+                        <td className="p-4 text-center">
+                          <button onClick={() => deletePost(post._id)} className="text-red-500 font-bold hover:underline">Xóa</button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
             )}
           </div>
-
         </div>
       </div>
     </main>
