@@ -14,7 +14,7 @@ export default async function AllProjectsPage() {
 
   // 3. Chuẩn hóa dữ liệu cho Component ProjectCard
   const projects = rawProjects.map((doc) => ({
-    id: doc._id.toString(),
+    _id: doc._id.toString(), // ✅ ĐÃ SỬA: Đổi 'id' thành '_id' cho khớp với ProjectCard
     name: doc.name,
     location: doc.location,
     price: doc.price,
@@ -54,7 +54,8 @@ export default async function AllProjectsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              // ✅ ĐÃ SỬA: Dùng project._id làm key
+              <ProjectCard key={project._id} project={project} />
             ))}
           </div>
         )}

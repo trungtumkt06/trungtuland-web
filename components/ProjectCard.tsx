@@ -1,11 +1,11 @@
 "use client";
 
 import Link from 'next/link';
-import { motion } from 'framer-motion'; // THÊM DÒNG NÀY
+import { motion } from 'framer-motion';
 
 // Định nghĩa kiểu dữ liệu (TypeScript) cho Dự án
 interface Project {
-  _id: string; // Đổi id thành _id cho khớp MongoDB
+  _id: string; // Đã khớp với dữ liệu truyền vào
   name: string;
   location: string;
   price: string;
@@ -17,10 +17,10 @@ export default function ProjectCard({ project }: { project: Project }) {
   return (
     <motion.div 
       // --- CẤU HÌNH HIỆU ỨNG ---
-      initial={{ opacity: 0, y: 30 }} // Ban đầu ẩn và nằm dưới 30px
-      whileInView={{ opacity: 1, y: 0 }} // Khi cuộn tới thì hiện lên và về vị trí cũ
-      viewport={{ once: true, margin: "-50px" }} // Chạy 1 lần khi cách mép màn hình 50px
-      transition={{ duration: 0.6, ease: "easeOut" }} // Thời gian chạy 0.6 giây
+      initial={{ opacity: 0, y: 30 }} 
+      whileInView={{ opacity: 1, y: 0 }} 
+      viewport={{ once: true, margin: "-50px" }} 
+      transition={{ duration: 0.6, ease: "easeOut" }} 
       // -------------------------
       className="group rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 bg-white border border-gray-100"
     >
