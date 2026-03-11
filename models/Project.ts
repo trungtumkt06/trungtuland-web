@@ -8,7 +8,7 @@ const projectSchema = new Schema(
     area: { type: String, required: true },
     type: { type: String, required: true },
     status: { type: String, required: true },
-    developer: { type: String, required: true },
+    developer: { type: String, default: "Đang cập nhật" },
     description: { type: String, required: true },
     // Cho phép cả images (mảng) và imageUrl (chuỗi) để không bao giờ bị lỗi vặt
     images: [{ type: String }], 

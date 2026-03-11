@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProjectCard from "@/components/ProjectCard";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const [projects, setProjects] = useState([]);
@@ -10,6 +11,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // 1. Lấy dữ liệu từ API khi tải trang
   useEffect(() => {
@@ -55,6 +58,16 @@ export default function Home() {
     }, 100); // Đợi 0.1 giây để React cập nhật danh sách xong mới cuộn
   };
 
+  // Gọi API lấy danh mục
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(data => {
+        if (data.categories) setCategories(data.categories);
+      })
+      .catch(err => console.error("Lỗi tải danh mục:", err));
+  }, []);
+
   return (
     <main className="bg-white">
       {/* SECTION 1: HERO & SEARCH BAR */}
@@ -91,19 +104,74 @@ export default function Home() {
             
             <div className="hidden md:block w-[1px] bg-gray-200 my-3"></div>
             
-            <div className="flex items-center px-4 group">
-              <span className="text-gray-400 text-xl">🏢</span>
-              <select 
-                className="px-3 py-4 outline-none text-gray-700 bg-transparent cursor-pointer min-w-[160px] text-lg font-medium"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
+            {/* DROPDOWN CHỌN LOẠI HÌNH (ĐỒNG BỘ TRONG SUỐT VỚI KHUNG TÌM KIẾM) */}
+            <div className="flex items-center px-4 group relative z-50">
+              
+              {/* Lưới tàng hình đóng menu khi click ra ngoài */}
+              {isDropdownOpen && (
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsDropdownOpen(false)}
+                ></div>
+              )}
+
+              {/* Icon Tòa nhà */}
+              <span className="text-gray-400 text-xl mr-2 group-hover:text-blue-500 transition-colors relative z-50">🏢</span>
+              
+              {/* Nút Bấm (Đã làm trong suốt, bỏ viền) */}
+              <div 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="relative z-50 flex items-center justify-between cursor-pointer py-4 min-w-[160px] bg-transparent outline-none"
               >
-                <option value="">Tất cả loại hình</option>
-                <option value="căn hộ">Căn hộ</option>
-                <option value="biệt thự">Biệt thự</option>
-                <option value="nhà phố">Nhà phố</option>
-                <option value="đất nền">Đất nền</option>
-              </select>
+                <span className="text-lg font-medium text-gray-700 group-hover:text-blue-600 transition-colors select-none">
+                  {filterType ? categories.find(c => c.name === filterType)?.name || filterType : "Tất cả loại hình"}
+                </span>
+                {/* Mũi tên */}
+                <svg 
+                  className={`w-5 h-5 ml-2 text-gray-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-blue-500' : 'group-hover:text-blue-500'}`} 
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+
+              {/* Danh sách xổ xuống (Vẫn giữ thiết kế nổi bật, rớt xuống bên dưới) */}
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute left-0 top-full mt-2 w-[240px] bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden py-2 z-50"
+                  >
+                    <div 
+                      className={`px-5 py-3 cursor-pointer transition-all flex items-center gap-3 ${!filterType ? 'bg-blue-50 text-blue-600 font-bold' : 'text-gray-600 font-medium hover:bg-gray-50 hover:text-blue-600 hover:pl-7'}`}
+                      onClick={() => { 
+                        setFilterType(""); 
+                        setIsDropdownOpen(false); 
+                      }}
+                    >
+                      <div className={`w-2 h-2 rounded-full transition-colors ${!filterType ? 'bg-blue-600' : 'bg-transparent group-hover:bg-blue-300'}`}></div>
+                      Tất cả loại hình
+                    </div>
+
+                    {categories.filter(c => c.type === 'project').map((cat) => (
+                      <div 
+                        key={cat._id}
+                        className={`px-5 py-3 cursor-pointer transition-all flex items-center gap-3 ${filterType === cat.name ? 'bg-blue-50 text-blue-600 font-bold' : 'text-gray-600 font-medium hover:bg-gray-50 hover:text-blue-600 hover:pl-7'}`}
+                        onClick={() => { 
+                          setFilterType(cat.name); 
+                          setIsDropdownOpen(false); 
+                        }}
+                      >
+                        <div className={`w-2 h-2 rounded-full transition-colors ${filterType === cat.name ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+                        {cat.name}
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             <button 
