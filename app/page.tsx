@@ -199,6 +199,92 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* SECTION 4: ĐỐI TÁC CHIẾN LƯỢC TÀI CHÍNH & ĐẦU TƯ */}
+      <section className="py-16 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h3 className="text-sm font-bold tracking-[0.2em] text-gray-400 uppercase mb-8">
+            Đối Tác Chiến Lược Của Chúng Tôi
+          </h3>
+          
+          {/* Lưới Logo Đối Tác - Dùng hiệu ứng ảnh xám chuyển màu khi di chuột */}
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+            {/* Logo 1: Vietcombank (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/vi/thumb/9/9d/Vietcombank_Logo.svg/1280px-Vietcombank_Logo.svg.png" 
+                alt="Vietcombank" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 2: Techcombank (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Techcombank_logo.png" 
+                alt="Techcombank" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 3: Vinhomes (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-Vinhomes.png" 
+                alt="Vinhomes" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 4: Novaland (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Novaland_Logo.svg/960px-Novaland_Logo.svg.png" 
+                alt="Novaland" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 5: Masterise (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://khangdiensaigon.com.vn/wp-content/uploads/2021/03/logo-masterise.png" 
+                alt="Masterise" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: CALL TO ACTION (KÝ GỬI & NHẬN BẢNG GIÁ) */}
+      <section className="relative py-24 bg-gray-900 text-white overflow-hidden">
+        {/* Ảnh nền mờ */}
+        <div className="absolute inset-0 z-0 opacity-20">
+          <img 
+            src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000" 
+            alt="Biệt thự sang trọng" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            Bạn Có Bất Động Sản Cần <span className="text-yellow-500">Ký Gửi?</span>
+          </h2>
+          <p className="text-gray-300 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+            Với tệp khách hàng VIP sẵn có và đội ngũ marketing chuyên nghiệp, TRUNGTỰ LAND cam kết thanh khoản nhanh chóng tài sản của bạn với mức giá tốt nhất thị trường.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <button className="w-full sm:w-auto bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-10 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-600/30 text-lg">
+              Đăng Ký Ký Gửi
+            </button>
+            <button className="w-full sm:w-auto bg-transparent border-2 border-white hover:bg-white hover:text-gray-900 text-white font-bold py-4 px-10 rounded-xl transition-all duration-300 text-lg">
+              Tư Vấn Đầu Tư
+            </button>
+          </div>
+          <p className="mt-8 text-sm text-gray-400">
+            Hoặc gọi trực tiếp Hotline 24/7: <a href="tel:0901234567" className="text-yellow-500 font-bold text-lg hover:underline">09xx.xxx.xxx</a>
+          </p>
+        </div>
+      </section>
     </main>
   );
 }
