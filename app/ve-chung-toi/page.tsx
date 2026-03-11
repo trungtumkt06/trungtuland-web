@@ -112,15 +112,54 @@ export default function AboutUs() {
       </section>
 
       {/* 5. ĐỐI TÁC CHIẾN LƯỢC (Tùy chọn) */}
-      <section className="py-20 bg-gray-50 border-t border-gray-100">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-gray-400 font-bold uppercase tracking-widest text-sm mb-10">Đối tác chiến lược</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all">
-            <span className="text-2xl font-bold text-gray-400">VINHOMES</span>
-            <span className="text-2xl font-bold text-gray-400">NOVALAND</span>
-            <span className="text-2xl font-bold text-gray-400">SUNGROUP</span>
-            <span className="text-2xl font-bold text-gray-400">MASTERISE</span>
-            <span className="text-2xl font-bold text-gray-400">NAM LONG</span>
+      <section className="py-16 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h3 className="text-sm font-bold tracking-[0.2em] text-gray-400 uppercase mb-8">
+            Đối Tác Chiến Lược Của Chúng Tôi
+          </h3>
+          
+          {/* Lưới Logo Đối Tác - Dùng hiệu ứng ảnh xám chuyển màu khi di chuột */}
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+            {/* Logo 1: Vietcombank (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/vi/thumb/9/9d/Vietcombank_Logo.svg/1280px-Vietcombank_Logo.svg.png" 
+                alt="Vietcombank" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 2: Techcombank (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Techcombank_logo.png" 
+                alt="Techcombank" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 3: Vinhomes (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-Vinhomes.png" 
+                alt="Vinhomes" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 4: Novaland (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Novaland_Logo.svg/960px-Novaland_Logo.svg.png" 
+                alt="Novaland" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {/* Logo 5: Masterise (Đã gắn link thật) */}
+            <div className="w-48 h-12 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+              <img 
+                src="https://khangdiensaigon.com.vn/wp-content/uploads/2021/03/logo-masterise.png" 
+                alt="Masterise" 
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
         </div>
       </section>
