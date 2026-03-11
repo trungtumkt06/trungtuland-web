@@ -176,47 +176,55 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* 5. HÀNH TRÌNH PHÁT TRIỂN (Tính năng mới) */}
-      <section className="py-24 container mx-auto px-6">
+      {/* 5. HÀNH TRÌNH PHÁT TRIỂN (Đã fix lỗi đường kẻ trung tâm) */}
+      <section className="py-24 container mx-auto px-6 overflow-hidden">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Hành Trình Kiến Tạo</h2>
           <div className="h-1 w-20 bg-yellow-500 mx-auto rounded-full"></div>
         </div>
 
-        <div className="max-w-4xl mx-auto relative border-l-2 border-yellow-200 ml-4 md:ml-auto">
+        <div className="max-w-4xl mx-auto relative">
+          {/* Đường kẻ dọc (Line) - Tự động vào giữa trên Desktop, sang trái trên Mobile */}
+          <div className="absolute left-[11px] md:left-1/2 top-0 bottom-0 w-[2px] bg-yellow-200 md:-translate-x-1/2 z-0"></div>
+
           {/* Cột mốc 1 */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative pl-8 md:pl-0 mb-12 flex flex-col md:flex-row items-start md:justify-between group">
-            <div className="absolute -left-[9px] md:left-1/2 md:-ml-[9px] w-4 h-4 rounded-full bg-yellow-500 border-4 border-white shadow"></div>
-            <div className="md:w-[45%] md:text-right pr-8">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative pl-10 md:pl-0 mb-12 flex flex-col md:flex-row items-start md:justify-between group z-10">
+            {/* Chấm tròn */}
+            <div className="absolute left-0 md:left-1/2 top-1.5 w-6 h-6 rounded-full bg-yellow-500 border-4 border-white shadow md:-translate-x-1/2"></div>
+            <div className="md:w-[45%] md:text-right pr-0 md:pr-10">
               <h3 className="text-2xl font-bold text-gray-900">2014</h3>
               <p className="text-yellow-600 font-medium mb-2">Viên gạch đầu tiên</p>
             </div>
-            <div className="md:w-[45%] pl-0 md:pl-8 mt-2 md:mt-0">
-              <p className="text-gray-600">Thành lập TRUNGTỰ LAND với văn phòng đầu tiên, tập trung phân phối phân khúc căn hộ trung tâm.</p>
+            <div className="md:w-[45%] pl-0 md:pl-10 mt-2 md:mt-0">
+              <p className="text-gray-600 leading-relaxed">Thành lập TRUNGTỰ LAND với văn phòng đầu tiên, tập trung phân phối phân khúc căn hộ trung tâm.</p>
             </div>
           </motion.div>
 
           {/* Cột mốc 2 */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative pl-8 md:pl-0 mb-12 flex flex-col md:flex-row items-start md:justify-between group">
-            <div className="absolute -left-[9px] md:left-1/2 md:-ml-[9px] w-4 h-4 rounded-full bg-yellow-500 border-4 border-white shadow"></div>
-            <div className="md:w-[45%] md:text-right pr-8 md:order-1">
-              <p className="text-gray-600">Mở rộng mạng lưới, trở thành đại lý chiến lược F1 của các Chủ đầu tư hàng đầu như Vinhomes, Masterise.</p>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative pl-10 md:pl-0 mb-12 flex flex-col md:flex-row items-start md:justify-between group z-10">
+            {/* Chấm tròn */}
+            <div className="absolute left-0 md:left-1/2 top-1.5 w-6 h-6 rounded-full bg-yellow-500 border-4 border-white shadow md:-translate-x-1/2"></div>
+            <div className="md:w-[45%] md:text-right pr-0 md:pr-10 md:order-1">
+              <p className="text-gray-600 leading-relaxed">Mở rộng mạng lưới, trở thành đại lý chiến lược F1 của các Chủ đầu tư hàng đầu như Vinhomes, Masterise.</p>
             </div>
-            <div className="md:w-[45%] pl-0 md:pl-8 mt-2 md:mt-0 md:order-2">
+            <div className="md:w-[45%] pl-0 md:pl-10 mt-2 md:mt-0 md:order-2">
               <h3 className="text-2xl font-bold text-gray-900">2018</h3>
               <p className="text-yellow-600 font-medium mb-2">Vươn mình mạnh mẽ</p>
             </div>
           </motion.div>
 
           {/* Cột mốc 3 */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative pl-8 md:pl-0 flex flex-col md:flex-row items-start md:justify-between group">
-            <div className="absolute -left-[9px] md:left-1/2 md:-ml-[9px] w-4 h-4 rounded-full bg-yellow-500 border-4 border-white shadow animate-pulse"></div>
-            <div className="md:w-[45%] md:text-right pr-8">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative pl-10 md:pl-0 flex flex-col md:flex-row items-start md:justify-between group z-10">
+            {/* Chấm tròn (Có hiệu ứng nhấp nháy cho hiện tại) */}
+            <div className="absolute left-0 md:left-1/2 top-1.5 w-6 h-6 rounded-full bg-yellow-500 border-4 border-white shadow md:-translate-x-1/2 flex items-center justify-center">
+              <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
+            </div>
+            <div className="md:w-[45%] md:text-right pr-0 md:pr-10">
               <h3 className="text-2xl font-bold text-gray-900">Nay</h3>
               <p className="text-yellow-600 font-medium mb-2">Định chuẩn thượng lưu</p>
             </div>
-            <div className="md:w-[45%] pl-0 md:pl-8 mt-2 md:mt-0">
-              <p className="text-gray-600">Hệ sinh thái dịch vụ toàn diện, phục vụ tệp khách hàng VIP với những dinh thự và biệt thự giới hạn.</p>
+            <div className="md:w-[45%] pl-0 md:pl-10 mt-2 md:mt-0">
+              <p className="text-gray-600 leading-relaxed">Hệ sinh thái dịch vụ toàn diện, phục vụ tệp khách hàng VIP với những dinh thự và biệt thự giới hạn.</p>
             </div>
           </motion.div>
         </div>
