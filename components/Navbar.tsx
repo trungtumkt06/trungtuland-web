@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false); // Trạng thái đóng/mở menu mobile
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const navLinks = [
@@ -18,82 +19,98 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white text-gray-800 shadow-md sticky top-0 z-[100]">
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center h-20">
+    <nav className="bg-white/95 backdrop-blur-md text-gray-800 shadow-md sticky top-0 z-[100] border-b border-blue-50">
+      <div className="container mx-auto px-6 flex justify-between items-center h-20">
         
-        {/* 1. LOGO */}
-        <Link href="/" className="text-3xl font-bold tracking-wider text-gray-900 flex-shrink-0">
-          TRUNGTỰ<span className="text-blue-600">LAND</span>
+        {/* 1. LOGO - Phối màu Xanh Navy và Sky Blue */}
+        <Link href="/" className="group flex items-center gap-1">
+          <span className="text-2xl md:text-3xl font-black tracking-tighter text-gray-900 transition-colors group-hover:text-blue-600">
+            TRUNGTỰ
+          </span>
+          <span className="text-2xl md:text-3xl font-light tracking-widest text-blue-600 border-l border-blue-100 pl-2">
+            LAND
+          </span>
         </Link>
         
-        {/* 2. DESKTOP MENU (Ẩn trên mobile) */}
-        <div className="hidden md:flex space-x-8 font-semibold">
+        {/* 2. DESKTOP MENU - Chữ đen, vạch xanh lướt mượt */}
+        <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <Link 
               key={link.href}
               href={link.href} 
-              className={`transition-colors duration-200 uppercase text-sm tracking-wide ${
-                pathname === link.href ? "text-blue-600 border-b-2 border-blue-600" : "hover:text-blue-600"
+              className={`relative py-2 text-xs lg:text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
+                pathname === link.href ? "text-blue-600" : "text-gray-600 hover:text-blue-600"
               }`}
             >
               {link.name}
+              {pathname === link.href && (
+                <motion.div 
+                  layoutId="activeNav"
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full"
+                />
+              )}
             </Link>
           ))}
         </div>
 
-        {/* 3. CTA BUTTON (Ẩn trên mobile) */}
+        {/* 3. CTA BUTTON - Xanh dương đậm cực kỳ uy tín */}
         <div className="hidden md:block">
-          <Link href="/lien-he" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-md font-bold transition-all shadow-lg hover:shadow-blue-200">
-            NHẬN TƯ VẤN
+          <Link 
+            href="/lien-he" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-7 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-lg shadow-blue-200 active:scale-95"
+          >
+            Nhận Tư Vấn
           </Link>
         </div>
 
-        {/* 4. MOBILE BUTTON (Chỉ hiện trên mobile) */}
+        {/* 4. MOBILE BUTTON */}
         <div className="md:hidden flex items-center">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-900 focus:outline-none transition-transform active:scale-90"
+            className="text-blue-600 p-2 focus:outline-none"
           >
-            {/* Icon Hamburger hoặc X */}
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {isOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-              )}
-            </svg>
+            <div className="w-6 flex flex-col gap-1.5">
+              <span className={`h-0.5 w-full bg-current transform transition-all duration-300 ${isOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`h-0.5 w-full bg-current transition-all duration-300 ${isOpen ? "opacity-0" : ""}`} />
+              <span className={`h-0.5 w-full bg-current transform transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </div>
           </button>
         </div>
       </div>
 
-      {/* 5. MOBILE MENU DROPDOWN (Chỉ hiện khi nhấn nút) */}
-      <div 
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out bg-white border-t ${
-          isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="px-6 py-4 space-y-3 shadow-inner">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsOpen(false)} // Đóng menu khi click link
-              className={`block py-3 font-bold border-b border-gray-50 ${
-                pathname === link.href ? "text-blue-600" : "text-gray-700"
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-          <Link 
-            href="/lien-he"
-            onClick={() => setIsOpen(false)}
-            className="block py-4 text-center bg-blue-600 text-white rounded-lg font-bold mt-4"
+      {/* 5. MOBILE MENU */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden overflow-hidden bg-white border-t border-blue-50 shadow-inner"
           >
-            NHẬN TƯ VẤN NGAY
-          </Link>
-        </div>
-      </div>
+            <div className="px-8 py-10 space-y-6">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block text-lg font-bold tracking-widest uppercase ${
+                    pathname === link.href ? "text-blue-600" : "text-gray-800"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Link 
+                href="/lien-he"
+                onClick={() => setIsOpen(false)}
+                className="block py-4 text-center bg-blue-600 text-white rounded-xl font-black tracking-widest uppercase shadow-lg shadow-blue-200"
+              >
+                Nhận Tư Vấn Ngay
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
