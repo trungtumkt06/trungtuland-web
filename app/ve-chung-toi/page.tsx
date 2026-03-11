@@ -50,7 +50,7 @@ export default function AboutUs() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" } as any}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
             className="lg:w-1/2"
           >
             <span className="text-yellow-600 font-bold uppercase tracking-[0.2em] text-sm">Câu chuyện TRUNGTỰ LAND</span>
@@ -118,7 +118,7 @@ export default function AboutUs() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" } as any}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
             className="grid grid-cols-2 md:grid-cols-4 gap-12 border-y border-gray-800 py-12"
           >
             <div>
@@ -151,7 +151,7 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <motion.div 
               initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut" } as any}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
               className="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-t-4 border-yellow-500"
             >
               <div className="w-16 h-16 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center text-3xl mb-6">👁️</div>
@@ -161,7 +161,7 @@ export default function AboutUs() {
 
             <motion.div 
               initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" } as any}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
               className="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-t-4 border-blue-600"
             >
               <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-6">🎯</div>
@@ -171,7 +171,7 @@ export default function AboutUs() {
 
             <motion.div 
               initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" } as any}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
               className="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-t-4 border-green-600"
             >
               <div className="w-16 h-16 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center text-3xl mb-6">💎</div>
@@ -194,7 +194,7 @@ export default function AboutUs() {
           {/* 2014 */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" } as any}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
             className="relative pl-10 md:pl-0 mb-12 flex flex-col md:flex-row items-start md:justify-between group z-10"
           >
             <div className="absolute left-0 md:left-1/2 top-1.5 w-6 h-6 rounded-full bg-yellow-500 border-4 border-white shadow md:-translate-x-1/2"></div>
@@ -210,7 +210,7 @@ export default function AboutUs() {
           {/* 2018 */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" } as any}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
             className="relative pl-10 md:pl-0 mb-12 flex flex-col md:flex-row items-start md:justify-between group z-10"
           >
             <div className="absolute left-0 md:left-1/2 top-1.5 w-6 h-6 rounded-full bg-yellow-500 border-4 border-white shadow md:-translate-x-1/2"></div>
@@ -226,7 +226,7 @@ export default function AboutUs() {
           {/* Nay */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" } as any}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any}
             className="relative pl-10 md:pl-0 flex flex-col md:flex-row items-start md:justify-between group z-10"
           >
             <div className="absolute left-0 md:left-1/2 top-1.5 w-6 h-6 rounded-full bg-yellow-500 border-4 border-white shadow md:-translate-x-1/2 flex items-center justify-center">
