@@ -1,12 +1,13 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
+// Đã thêm chữ Variants vào dòng import bên dưới
+import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
 
 export default function AboutUs() {
-  // Cấu hình hiệu ứng chung để code gọn hơn
-  const fadeInUp = {
+  // Đã thêm ": Variants" để TypeScript không còn báo lỗi gạch đỏ
+  const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
@@ -176,7 +177,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* 5. HÀNH TRÌNH PHÁT TRIỂN (Đã fix lỗi đường kẻ trung tâm) */}
+      {/* 5. HÀNH TRÌNH PHÁT TRIỂN */}
       <section className="py-24 container mx-auto px-6 overflow-hidden">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Hành Trình Kiến Tạo</h2>
