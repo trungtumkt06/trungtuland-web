@@ -8,9 +8,27 @@ import FloatingContact from "@/components/FloatingContact";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// ĐÃ NÂNG CẤP BỘ SEO BẢN PREMIUM TẠI ĐÂY
 export const metadata: Metadata = {
   title: "TRUNGTỰ LAND - Bất Động Sản Cao Cấp",
   description: "Giải pháp bất động sản cao cấp, minh bạch pháp lý và sinh lời bền vững.",
+  openGraph: {
+    title: "TRUNGTỰ LAND - Bất Động Sản Cao Cấp",
+    description: "Khám phá bộ sưu tập bất động sản đẳng cấp nhất. Hỗ trợ pháp lý minh bạch, sinh lời vượt trội.",
+    url: "https://trungtumkt06.github.io/my-profile/", // Có thể thay bằng link Vercel thực tế của web bất động sản sau
+    siteName: "TRUNGTỰ LAND",
+    images: [
+      {
+        // Ảnh bìa sang trọng khi chia sẻ link lên mạng xã hội
+        url: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=1200", 
+        width: 1200,
+        height: 630,
+        alt: "Ảnh bìa TRUNGTỰ LAND",
+      },
+    ],
+    locale: "vi_VN",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
