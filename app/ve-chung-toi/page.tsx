@@ -145,7 +145,7 @@ export default function AboutUs() {
       <section className="py-24 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Kim Chỉ Nam Hoạt Động</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Tầm Nhìn - Sứ Mệnh - Giá Trị Cốt Lõi</h2>
             <div className="h-1 w-20 bg-yellow-500 mx-auto rounded-full"></div>
           </div>
 
@@ -265,10 +265,10 @@ export default function AboutUs() {
             Khám phá các dự án bất động sản đẳng cấp nhất hiện nay hoặc liên hệ với chúng tôi để nhận đặc quyền tư vấn 1:1.
           </p>
           <div className="flex justify-center gap-4">
-            <Link href="/" className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-colors">
+            <Link href="/du-an" className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-colors">
               Xem Dự Án
             </Link>
-            <Link href="tel:0909123456" className="bg-white border-2 border-yellow-600 text-yellow-600 hover:bg-yellow-50 font-bold py-3 px-8 rounded-lg transition-colors">
+            <Link href="/lien-he" className="bg-white border-2 border-yellow-600 text-yellow-600 hover:bg-yellow-50 font-bold py-3 px-8 rounded-lg transition-colors">
               Liên Hệ Ngay
             </Link>
           </div>
